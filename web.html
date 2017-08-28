@@ -29,6 +29,8 @@
       "esri/symbols/IconSymbol3DLayer",
       "esri/config",
       "esri/core/urlUtils",
+	  "esri/layers/support/LabelClass",
+	  "esri/symbols/TextSymbol",
 	  "esri/Basemap",
       "dojo/domReady!"
     ], function(
@@ -40,6 +42,8 @@
       IconSymbol3DLayer,
       esriConfig,
       urlUtils,
+	  LabelClass,
+	  TextSymbol,
 	  Basemap) {
 
       // If CSV files are not on the same domain as your website, a CORS enabled server
@@ -59,16 +63,31 @@
         title: "Earthquake Info",
         content: "Magnitude {mag} {type} hit {place} on {time}."
       };
+	  
+	  var labelclass = new LabelClass({
+  labelExpressionInfo: { value: "{Temp}°F " },
+  symbol: new TextSymbol({
+    color: "black",
+    haloSize: 1,
+    haloColor: "white"
+  })
+});
+
+
 
       var csvLayer = new CSVLayer({
         url: url,
         copyright: "USGS Earthquakes",
+		labelsVisible: true,
+		labelingInfo: [labelclass],
         popupTemplate: template,
         elevationInfo: {
           // drapes icons on the surface of the globe
           mode: "on-the-ground"
         }
       });
+	  
+	  
 
       csvLayer.renderer = new SimpleRenderer({
         symbol: new PointSymbol3D({
@@ -93,6 +112,7 @@
         basemap: nightBasemap,
         layers: [csvLayer]
       });
+	  
 
       var view = new SceneView({
         container: "viewDiv",
