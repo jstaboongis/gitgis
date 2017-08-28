@@ -29,6 +29,7 @@
       "esri/symbols/IconSymbol3DLayer",
       "esri/config",
       "esri/core/urlUtils",
+	  "esri/Basemap",
       "dojo/domReady!"
     ], function(
       Map,
@@ -38,7 +39,8 @@
       PointSymbol3D,
       IconSymbol3DLayer,
       esriConfig,
-      urlUtils) {
+      urlUtils,
+	  Basemap) {
 
       // If CSV files are not on the same domain as your website, a CORS enabled server
       // or a proxy is required.
@@ -84,16 +86,18 @@
           ]
         })
       });
+	  
+	  var nightBasemap = Basemap.fromId("streets-night-vector");
 
       var map = new Map({
-        basemap: "gray",
+        basemap: nightBasemap,
         layers: [csvLayer]
       });
 
       var view = new SceneView({
         container: "viewDiv",
-        center: [138, 35],
-        zoom: 4,
+        center: [-118.2, 34.1],
+        zoom: 8,
         map: map
       });
 
