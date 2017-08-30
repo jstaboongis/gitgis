@@ -82,7 +82,8 @@ def GetWeather(wurl, urls):
         
         temp = sections[1]
         temp = temp.replace(" ' ","")
-        temp = temp.replace("&deg;","")
+        temp = temp.replace("&deg; ","")
+        temp = temp.replace(" ","")
         
         weather = sections[2]
         weather = weather.replace(" />","")
@@ -105,14 +106,14 @@ fr = open('C:\Users\WORK\Documents\GitHub\gitgis\samplenoweather.csv','r')
 fw = open('C:\Users\WORK\Documents\GitHub\gitgis\sampleout.csv','w')
 line = fr.readline()
 line = line.replace('\n','')
-fw.write(line + ", Temp\n")
+fw.write(line + ",Temp\n")
 count = 0
 while line:
     line = fr.readline()
     line = line.replace('\n','')
 
     
-    fw.write(line + ', ' + listnumbers[count] + '\n')
+    fw.write(line + ',' + listnumbers[count] + '\n')
     count = count + 1
     if count == 19:
         break
