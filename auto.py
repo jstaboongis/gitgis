@@ -7,7 +7,9 @@ def process():
     subprocess.call(cmds, shell=True)
     cmds = 'python sample2.py'
     subprocess.call(cmds, shell=True)
-    cmds = 'git commit'
+    cmds = 'git add -A'
+    subprocess.call(cmds, shell=True)
+    cmds = 'git commit -m "some message"'
     subprocess.call(cmds, shell=True)
     cmds = 'git push'
     subprocess.call(cmds, shell=True)
