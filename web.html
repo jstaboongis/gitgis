@@ -49,7 +49,7 @@
       // If CSV files are not on the same domain as your website, a CORS enabled server
       // or a proxy is required.
       var url =
-        "https://raw.githubusercontent.com/jstaboongis/gitgis/master/sample.csv";
+        "https://rawgit.com/jstaboongis/gitgis/master/sampleout.csv";
       esriConfig.request.corsEnabledServers.push(url);
 
       // Paste the url into a browser's address bar to download and view the attributes
@@ -65,15 +65,22 @@
       };
 	  
 	  var labelclass = new LabelClass({
-  labelExpressionInfo: { value: "{Temp}°F " },
+  labelExpressionInfo: { value: "{Temp}" },
   symbol: new TextSymbol({
     color: "black",
-    haloSize: 1,
-    haloColor: "white"
+    haloSize: .5,
+    haloColor: "white",
+	  font: {  // autocast as esri/symbols/Font
+    size: 12,
+    family: "sans-serif",
+    weight: "bolder"
+  }
   })
 });
 
+labelclass.f
 
+labelclass.labelPlacement = "above-right";
 
       var csvLayer = new CSVLayer({
         url: url,
@@ -97,10 +104,10 @@
                 color: [238, 69, 0, 0.75]
               },
               outline: {
-                width: 0.5,
+                width: 0,
                 color: "white"
               },
-              size: "12px"
+              size: "2px"
             })
           ]
         })
