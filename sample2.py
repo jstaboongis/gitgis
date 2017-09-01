@@ -100,9 +100,10 @@ while listurls != []:
     for i in listurls:
         GetWeather(i, listurls)
 
-
-os.remove('C:\Users\WORK\Documents\GitHub\gitgis\sampleout.csv')
-os.remove('C:\Users\WORK\Documents\GitHub\gitgis\.git\index.lock')
+if os.path.exists('C:\Users\WORK\Documents\GitHub\gitgis\sampleout.csv'):
+    os.remove('C:\Users\WORK\Documents\GitHub\gitgis\sampleout.csv')
+if os.path.exists('C:\Users\WORK\Documents\GitHub\gitgis\.git\index.lock'):
+    os.remove('C:\Users\WORK\Documents\GitHub\gitgis\.git\index.lock')
 fr = open('C:\Users\WORK\Documents\GitHub\gitgis\samplenoweather.csv','r')
 fw = open('C:\Users\WORK\Documents\GitHub\gitgis\sampleout.csv','w')
 line = fr.readline()
