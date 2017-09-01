@@ -16,7 +16,7 @@ def process(count):
     subprocess.call(cmds, shell=True)
     print "waiting"
     print "time to stop this program"
-    threading.Timer(300, process).start()
+    threading.Timer(5, process).start()
     print "dont stop now"
     count = count + 1
     print "This process has run %s times." % (count)
