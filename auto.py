@@ -1,8 +1,8 @@
 import threading
 import os, subprocess
+import time
 global counter
-counter = 0
-def process(count):
+def process():
     print "working"
     cmds = 'cd C:\Users\WORK\Documents\GitHub\gitgis'
     subprocess.call(cmds, shell=True)
@@ -16,13 +16,14 @@ def process(count):
     subprocess.call(cmds, shell=True)
     print "waiting"
     print "time to stop this program"
-    threading.Timer(5, process).start()
     print "dont stop now"
-    count = count + 1
-    print "This process has run %s times." % (count)
-    
 
-process(counter)
+    
+while True:
+    time.sleep(5)
+    process()
+    
+process()
 
 
 
