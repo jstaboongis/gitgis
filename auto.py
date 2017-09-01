@@ -14,7 +14,9 @@ def process():
     cmds = 'git push'
     subprocess.call(cmds, shell=True)
     print "waiting"
-    threading.Timer(60, process).start()
+    print "time to stop this program"
+    threading.Timer(300, process).start()
+    print "dont stop now"
     
 
 process()
