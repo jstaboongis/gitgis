@@ -20,10 +20,10 @@ def process():
 
     
 while True:
-    time.sleep(5)
+    time.sleep(500)
     process()
     
-process()
+
 
 
 

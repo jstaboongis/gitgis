@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.green-orange.min.css" />
+    <link rel="stylesheet" href="./styles/easy-button.css" />
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
+    <link rel="stylesheet" href="./styles/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="./styles/myStyles.css" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.1.1/css/ol.css" type="text/css">
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script defer src="https://code.getmdl.io/1.1.1/material.min.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.1.1/build/ol.js"></script>
+    <style>
+        input[type=checkbox] {
+            /* Double-sized Checkboxes */
+            -ms-transform: scale(2);
+            /* IE */
+            -moz-transform: scale(2);
+            /* FF */
+            -webkit-transform: scale(2);
+            /* Safari and Chrome */
+            -o-transform: scale(2);
+            /* Opera */
+            padding: 10px;
+            margin-left: 20px;
+        }
+
+        body,html,.map {
+            width: 100%;
+            height: 98%;
+        }
+    </style>
+    <meta charset="utf-8">
+    <title>Vineyard Viewer</title>
+</head>
+
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout">
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">
+                        <span class="Title">Vineyard Viewer</span>
+                </span>
+                <div class="mdl-layout-spacer"></div>
+
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title">Vineyard Viewer</span>
+            <nav class="mdl-navigation">
+                <input type="button" name="home" onclick="home()" value="Home" id="btnhome" /> <br>
+                <h3></h3>
+                <h5>Enable Tracking</h5>
+                <input id="track" type="checkbox" />
+                <h3></h3>
+                <h5>Layer Enabling</h5>
+                <label id="parcellabel">Parcel</label>
+                <input type="button" name="parcel" onclick="parcel()" value="Load" id="btnparcel" /> <br>
+                <input type="textbox" id="parceltextbox" value="dateflown = '2016-09-19'" placeholder="dateflown = '2016-09-26'" />                <br>
+                <input type="button" name="parcelremove" onclick="parcelremove()" value="Remove Parcel" id="btnparcelremove" /><br><br>
+                <h3></h3>
+                <label id="rowslabel">Rows</label>
+                <input type="button" name="rows" onclick="rows()" value="Load" id="btnrows" /> <br>
+                <input type="textbox" id="rowstextbox" value="rowid > 20" placeholder="rowid > 20" /> <br>
+                <input type="button" name="rowremove" onclick="rowsremove()" value="Remove Rows" id="btnrowsremove" /><br><br>
+                <h3></h3>
+                <label id="plantslabel">Plants</label>
+                <input type="button" name="plants" onclick="plants()" value="Load" id="btnplants" /> <br>
+                <input type="textbox" id="plantstextbox" value="presence = 1" placeholder="rowid > 20" /> <br>
+                <input type="button" name="plantsremove" onclick="plantsremove()" value="Remove Plants" id="btnplantsremove" /><br><br>
+                <h3></h3>
+                <h5>BaseMap Switcher</h5>
+                <input type="button" name="imagery" onclick="googleon()" value="Imagery" id="btnimagery" /> <br>
+                <input type="button" name="osm" onclick="osmon()" value="Open Street Maps" id="btnosm" /> <br><br>
+
+                <h5>Pan by Coordinates</h5>
+                <label id="latlabel">Enter Latitude WGS84</label>
+                <input type="textbox" id="lattextbox" placeholder="51.507222" /> <br>
+                <label id="longlabel">Enter Longitude WGS84</label>
+                <input type="textbox" id="longtextbox" placeholder="-0.12755" /> <br>
+                <input type="button" name="pan" onclick="pan()" value="Pan to Coordinates" id="btnpan" />
+
+        </div>
+    </div>
+
+
+    </nav>
+    </div>
+    <div id="map" class="map">
+    <main class="mdl-layout__content">
+        
+        </div>
+</body>
+
+</html>
+</div>
+</main>
+</div>
+<script>
+
+
+    //basemap
+    var openstreetmaplayer = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    //initialize view, set zoom and extent of map
+    //convert center using coordinate converter available here
+    //http://twcc.fr/en/#
+    //convert from WGS84 TO WEB MERCATOR
+    var view = new ol.View({
+        center: [-75572.35, 5624603.7],
+        zoom: 17
+    });
+
+    //home button functionality
+    //copy parameters from view above
+    function home() {
+        view.animate({
+            duration: 500,
+            center: [-75472.35, 5624603.7],
+            zoom: 17        
+});
+    }
+
+    //initialize map
+
+    var map = new ol.Map({
+        layers: [],
+        target: 'map',
+        controls: [],
+        view: view
+    });
+    map.addLayer(openstreetmaplayer);
+
+    //enable geolocation for tracking
+    var geolocation = new ol.Geolocation({
+        projection: view.getProjection()
+    });
+    function el(id) {
+        return document.getElementById(id);
+    }
+    el('track').addEventListener('change', function () {
+        geolocation.setTracking(this.checked);
+    });
+
+
+    // handle geolocation error.
+    geolocation.on('error', function (error) {
+        var info = document.getElementById('info');
+        info.innerHTML = error.message;
+        info.style.display = '';
+    });
+    var accuracyFeature = new ol.Feature();
+    geolocation.on('change:accuracyGeometry', function () {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+    });
+    var positionFeature = new ol.Feature();
+    positionFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({
+                color: '#3399CC'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 2
+            })
+        })
+    }));
+
+    //**loading layers functions, supports filtering using queries or entering nothing.
+    //add ip address/localhost where it says the ip address.
+    //likely will not work outside your network. see geoserver documentation for more information.
+
+    //load parcel layer
+    function parcel() {
+        var query = document.getElementById('parceltextbox');
+        cql = query.value
+        if (cql.length < 1) {
+            parcellayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:parcel', 'TILED': true }, serverType: 'geoserver'                
+})            
+});
+            map.addLayer(parcellayer);
+        }
+        else {
+            parcellayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:parcel', 'TILED': true, 'cql_filter': cql }, serverType: 'geoserver'
+                })
+            });
+            map.addLayer(parcellayer);
+        }
+    }
+
+    //remove parcel layer
+    function parcelremove() {
+        map.removeLayer(parcellayer);
+    }
+
+    //load rows layer
+    function rows() {
+        var query = document.getElementById('rowstextbox');
+        cql = query.value
+        if (cql.length < 1) {
+            rowslayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:rows', 'TILED': true }, serverType: 'geoserver'
+                })
+            });
+            map.addLayer(rowslayer);
+        }
+        else {
+            rowslayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:rows', 'TILED': true, 'cql_filter': cql }, serverType: 'geoserver'
+                })            
+});
+            map.addLayer(rowslayer);
+        }
+    }
+
+    //remove rows layer
+    function rowsremove() {
+        map.removeLayer(rowslayer);
+    }
+
+    //load plants layer
+    function plants() {
+        var query = document.getElementById('plantstextbox');
+        cql = query.value
+        if (cql.length < 1) {
+            plantslayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:plants', 'TILED': true }, serverType: 'geoserver'                
+})            
+});
+            map.addLayer(plantslayer);
+        }
+        else {
+            plantslayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'http://172.16.176.150:8080/geoserver/skysquirrel/wms',
+                    params: { 'LAYERS': 'skysquirrel:plants', 'TILED': true, 'cql_filter': cql }, serverType: 'geoserver'                
+})
+            });
+            map.addLayer(plantslayer);
+        }
+    }
+
+    //remove plants layer
+    function plantsremove() {
+        map.removeLayer(plantslayer);
+    }
+
+    //google maps imagery
+    googleimagerylayer = new ol.layer.Tile({
+        source: new ol.source.TileImage({ url: 'http://khm0.googleapis.com/kh?v=717&hl=pl&&x={x}&y={y}&z={z}' })
+    });
+
+    //enable imagery
+    function googleon() {
+        map.removeLayer(openstreetmaplayer);
+        map.removeLayer(googleimagerylayer);
+        map.addLayer(googleimagerylayer);
+    }
+
+    //enable open street maps
+    function osmon() {
+        map.removeLayer(openstreetmaplayer);
+        map.removeLayer(googleimagerylayer);
+        map.addLayer(openstreetmaplayer);
+    }
+
+    //panning functionality
+    function pan() {
+        var lat = parseFloat(document.getElementById('lattextbox').value);
+        var long = parseFloat(document.getElementById('longtextbox').value);
+        var coord = ol.proj.fromLonLat([long, lat]);
+        if (!isNaN(lat) && !isNaN(long)) {
+            view.animate({
+                center: coord,
+                duration: 2000
+            });
+        }
+    }
+
+    //geolocation functionality
+    geolocation.on('change:position', function () {
+        var coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ?
+            new ol.geom.Point(coordinates) : null);
+    });
+
+    //add vector layer for geolocation
+    new ol.layer.Vector({
+        map: map,
+        source: new ol.source.Vector({
+            features: [accuracyFeature, positionFeature]
+        })
+    });
+</script>
+</body>
+
+</html>
